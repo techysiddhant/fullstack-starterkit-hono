@@ -2,13 +2,23 @@
   "name": "backend",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify"
+    "deploy": "wrangler deploy --minify",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "wrangler d1 migrations apply DB --local",
+    "db:studio": "LOCAL_DB_PATH=$(find .wrangler/state/v3/d1/miniflare-D1DatabaseObject -type f -name '*.sqlite' -print -quit) drizzle-kit studio",
+    "db:prod": "wrangler d1 migrations apply DB --remote"
   },
   "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.40.0",
     "hono": "^4.7.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250214.0",
+    "@types/node": "^22.13.8",
+    "drizzle-kit": "^0.30.5",
+    "tsx": "^4.19.3",
     "wrangler": "^3.109.2"
   }
 }
