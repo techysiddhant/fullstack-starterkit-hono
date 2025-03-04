@@ -9,6 +9,7 @@
     "db:prod": "wrangler d1 migrations apply DB --remote"
   },
   "dependencies": {
+    "better-auth": "^1.2.2",
     "better-sqlite3": "^11.8.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.0",
