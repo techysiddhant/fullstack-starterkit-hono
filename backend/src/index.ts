@@ -1,25 +1,28 @@
 import { Hono } from "hono";
-import { auth } from "./lib/auth";
+import { initAuth } from "./lib/auth";
 import { cors } from "hono/cors";
+import { Env, SessionAuth, UserAuth } from "./types";
 
 const app = new Hono<{
+  Bindings: Env["Bindings"];
   Variables: {
-    user: typeof auth.$Infer.Session.user | null;
-    session: typeof auth.$Infer.Session.session | null;
+    user: UserAuth | null;
+    session: SessionAuth | null;
   };
 }>();
 app.use(
-  "/api/auth/*", // or replace with "*" to enable cors for all routes
+  "*", // or replace with "*" to enable cors for all routes
   cors({
     origin: "http://localhost:3000", // replace with your origin
     allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["POST", "GET", "OPTIONS"],
+    allowMethods: ["POST", "GET", "OPTIONS", "PUT"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
     credentials: true,
   })
 );
 app.use("*", async (c, next) => {
+  const auth = initAuth(c.env as Env["Bindings"]);
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
   if (!session) {
@@ -33,6 +36,7 @@ app.use("*", async (c, next) => {
   return next();
 });
 app.on(["POST", "GET"], "/api/auth/*", (c) => {
+  const auth = initAuth(c.env as Env["Bindings"]);
   return auth.handler(c.req.raw);
 });
 app.get("/", (c) => {
