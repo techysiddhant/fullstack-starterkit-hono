@@ -4,3 +4,4 @@ CLOUDFLARE_D1_TOKEN=
 LOCAL_DB_PATH=".wrangler/state/v3/d1/miniflare-D1DatabaseObject/filename.sqlite"
 BETTER_AUTH_SECRET=
 BETTER_AUTH_URL=http://localhost:8787
+ORIGIN_URL=http://localhost:3000

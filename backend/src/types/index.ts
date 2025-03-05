@@ -2,6 +2,8 @@ export type Env = {
   Bindings: {
     DB: D1Database;
     ORIGIN_URL: string;
+    BETTER_AUTH_SECRET: string;
+    BETTER_AUTH_URL: string;
   };
 };
 

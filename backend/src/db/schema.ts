@@ -6,8 +6,12 @@ export const user = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("email_verified", { mode: "boolean" }).notNull(),
   image: text("image"),
+  username: text("username").unique(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  banned: integer("banned", { mode: "boolean" }).notNull().default(false), // Fix boolean field
+  banReason: text("ban_reason"),
+  banExpires: integer("ban_expires", { mode: "timestamp" }), // Ensure consistency
 });
 
 export const session = sqliteTable("session", {
@@ -21,6 +25,7 @@ export const session = sqliteTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  impersonatedBy: text("impersonated_by"),
 });
 
 export const account = sqliteTable("account", {
