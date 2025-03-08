@@ -44,13 +44,5 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
-app.get("/test", async (c) => {
-  const db = createDB(c.env as Env["Bindings"]);
-  try {
-    const users = await db.select().from(user).all();
-    return c.json({ users });
-  } catch (error) {
-    console.log(error);
-  }
-});
+
 export default app;
