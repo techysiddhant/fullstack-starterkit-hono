@@ -4,8 +4,9 @@ import { createDB } from "../db";
 import { Env } from "../types";
 import { admin, username } from "better-auth/plugins";
 export const initAuth = (env: Env["Bindings"]) => {
+  const db = createDB(env as Env["Bindings"]);
   return betterAuth({
-    database: drizzleAdapter(createDB, {
+    database: drizzleAdapter(db, {
       provider: "sqlite", // or "mysql", "sqlite"
     }),
     plugins: [admin(), username()],
@@ -22,6 +23,18 @@ export const initAuth = (env: Env["Bindings"]) => {
     },
     emailAndPassword: {
       enabled: true,
+    },
+    socialProviders: {
+      github: {
+        clientId: env.GITHUB_CLIENT_ID,
+        clientSecret: env.GITHUB_CLIENT_SECRET,
+      },
+    },
+    advanced: {
+      defaultCookieAttributes: {
+        sameSite: "none",
+        secure: true,
+      },
     },
   });
 };
