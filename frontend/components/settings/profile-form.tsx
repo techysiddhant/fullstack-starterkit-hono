@@ -14,20 +14,30 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { authClient } from "@/lib/auth-client"
+import { useEffect } from "react"
 const formSchema = z.object({
     username: z.string().min(2).max(50),
 })
 export const ProfileForm = () => {
+    const { data } = authClient.useSession();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            username: "",
+            username: data?.user?.username ?? "",
         },
     })
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    useEffect(() => {
+        form.setValue('username', data?.user?.username ?? "")
+    }
+        , [data])
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        console.log(values)
+        console.log(values);
+        await authClient.updateUser({
+            username: values.username
+        });
     }
     return (
         <div>

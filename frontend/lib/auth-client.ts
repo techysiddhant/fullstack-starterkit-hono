@@ -5,4 +5,4 @@ export const authClient = createAuthClient({
   baseURL: "http://localhost:8787",
   // the base url of your auth server
 });
-// export const { signIn, signUp, useSession } = createAuthClient();
+export const { signIn, signUp, useSession } = createAuthClient();
