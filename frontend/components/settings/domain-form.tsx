@@ -16,12 +16,65 @@ import {
 import { Input } from "@/components/ui/input"
 import { authClient } from "@/lib/auth-client"
 import { useEffect } from "react"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { addCustomDomain, getDomainConfig, getDomainProject } from "@/lib/domain"
+import { DomainCard } from "./domain-card"
+import { get } from "http"
+import { queryClient } from "@/lib/query-client"
 const formSchema = z.object({
     customDomain: z.string().min(2),
 })
 
 export const DomainForm = () => {
-    const { data } = authClient.useSession();
+    const { data: userData } = authClient.useSession();
+    const { data, isLoading, isFetching } = useQuery({
+        queryKey: ["domains"],
+        queryFn: async () => {
+            // const res = await fetch('http://localhost:8787/profile', {
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //     },
+            //     method: "GET",
+            //     credentials: "include",
+            // });
+            const domainData = await getDomainProject(userData?.user?.id!);
+            // const datares = await res.json();
+            // const datab = await Promise.all(
+            //     datares.map(async (value: any) => {
+            //         const config = await getDomainConfig(value.customDomain);
+            //         return {
+            //             ...value,
+            //             config,
+            //         };
+            //     })
+            // );
+            console.log("DOMAIN DATA", domainData);
+            const config = domainData ? await getDomainConfig(domainData.split(":")[0]) : null;
+            return {
+                domains: config,
+                customDomain: domainData?.split(":")[0],
+            }
+            // return data;
+            // return await getDomainConfig(data?.user?.username!)
+        }
+    });
+    console.log("FETCH", data?.domains);
+    const { mutate, isPending } = useMutation({
+        mutationFn: async (domain: string) => {
+            await addCustomDomain(domain, { userId: userData?.user?.id! });
+            // await fetch('http://localhost:8787/settings', {
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //     },
+            //     body: JSON.stringify({ customDomain: domain, fullName: "" }),
+            //     method: "POST",
+            //     credentials: "include",
+            // });
+            await queryClient.invalidateQueries({ queryKey: ["domains"] });
+
+            // setDomain("");
+        },
+    });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -32,8 +85,8 @@ export const DomainForm = () => {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        console.log(values);
-
+        // console.log(values);
+        mutate(values.customDomain);
     }
     return (
         <div>
@@ -58,6 +111,16 @@ export const DomainForm = () => {
                     <Button type="submit">Submit</Button>
                 </form>
             </Form>
+            <div className="space-y-4">
+                {isLoading ? (
+                    <p>Loading...</p>
+                ) : (
+                    // data?.domains.map((domain: any, ind) => (
+                    //     <DomainCard key={ind} {...domain} />
+                    // ))
+                    data?.domains ? <DomainCard customDomain={data?.customDomain!} config={data?.domains} /> : null
+                )}
+            </div>
         </div>
 
     )
