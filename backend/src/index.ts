@@ -45,6 +45,23 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
+app.get("/profile", async (c) => {
+  const db = createDB(c.env as Env["Bindings"]);
+  const user = c.get("user");
+  if (!user) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+  try {
+    const profileData = await db
+      .select()
+      .from(profile)
+      .where(eq(profile.userId, user.id));
+    return c.json(profileData);
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: "Internal Server Error" }, 500);
+  }
+});
 app.post("/settings", async (c) => {
   const db = createDB(c.env as Env["Bindings"]);
   const user = c.get("user");
@@ -57,7 +74,8 @@ app.post("/settings", async (c) => {
       .select()
       .from(profile)
       .where(eq(profile.userId, user.id));
-    if (!profileData) {
+    // console.log(profileData);
+    if (profileData.length === 0) {
       await db.insert(profile).values({
         userId: user.id,
         fullName: fullName,
