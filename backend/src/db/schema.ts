@@ -59,3 +59,11 @@ export const verification = sqliteTable("verification", {
   createdAt: integer("created_at", { mode: "timestamp" }),
   updatedAt: integer("updated_at", { mode: "timestamp" }),
 });
+export const profile = sqliteTable("profile", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  fullName: text("full_name"),
+  customDomain: text("custom_domain").unique(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});

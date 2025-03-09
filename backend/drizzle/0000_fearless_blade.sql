@@ -15,6 +15,13 @@ CREATE TABLE `account` (
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE TABLE `profile` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`full_name` text,
+	`custom_domain` text
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `profile_custom_domain_unique` ON `profile` (`custom_domain`);--> statement-breakpoint
 CREATE TABLE `session` (
 	`id` text PRIMARY KEY NOT NULL,
 	`expires_at` integer NOT NULL,

@@ -3,7 +3,8 @@ import { initAuth } from "./lib/auth";
 import { cors } from "hono/cors";
 import { Env, SessionAuth, UserAuth } from "./types";
 import { createDB } from "./db";
-import { user } from "./db/schema";
+import { profile, user } from "./db/schema";
+import { eq } from "drizzle-orm";
 
 const app = new Hono<{
   Bindings: Env["Bindings"];
@@ -43,6 +44,40 @@ app.on(["POST", "GET"], "/api/auth/*", (c) => {
 });
 app.get("/", (c) => {
   return c.text("Hello Hono!");
+});
+app.post("/settings", async (c) => {
+  const db = createDB(c.env as Env["Bindings"]);
+  const user = c.get("user");
+  if (!user) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+  const { fullName, customDomain } = await c.req.json();
+  try {
+    const profileData = await db
+      .select()
+      .from(profile)
+      .where(eq(profile.userId, user.id));
+    if (!profileData) {
+      await db.insert(profile).values({
+        userId: user.id,
+        fullName: fullName,
+        customDomain: customDomain,
+      });
+      return c.json({ success: true });
+    } else {
+      await db
+        .update(profile)
+        .set({
+          fullName: fullName,
+          customDomain: customDomain,
+        })
+        .where(eq(profile.userId, user.id));
+      return c.json({ success: true });
+    }
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: "Internal Server Error" }, 500);
+  }
 });
 
 export default app;

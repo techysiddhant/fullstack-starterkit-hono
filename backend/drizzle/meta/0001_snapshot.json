@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "044af5c0-4956-449a-af62-ef989a3f9868",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "d1e35fa1-75c8-4389-9c0a-e991dbfa2270",
+  "prevId": "044af5c0-4956-449a-af62-ef989a3f9868",
   "tables": {
     "account": {
       "name": "account",
@@ -142,6 +142,13 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -153,7 +160,21 @@
           "isUnique": true
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "profile_user_id_user_id_fk": {
+          "name": "profile_user_id_user_id_fk",
+          "tableFrom": "profile",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
