@@ -3,7 +3,7 @@ import { Redis } from "@upstash/redis";
 
 const BASE_URL = "https://api.vercel.com";
 const BASE_DOMAIN = "jsnode.shop";
-const PROJECT_SLUG = "projects/build0/domains";
+const PROJECT_SLUG = "projects/fullstack-starterkit-hono/domains";
 
 const headers = {
   Authorization: `Bearer ${process.env.VERCEL_TOKEN}`,
