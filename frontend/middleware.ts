@@ -59,12 +59,7 @@
 //   ],
 // };
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_URL!,
-  token: process.env.UPSTASH_REDIS_TOKEN!,
-});
+import { getDomainProject } from "./lib/domain";
 
 export const config = {
   matcher: "/", // Runs only on the homepage (custom domains will hit this)
@@ -80,7 +75,7 @@ export default async function middleware(request: NextRequest) {
   }
 
   // Lookup username only for custom domains
-  const username = await redis.get<string>(`domain:${domain}`);
+  const username = await getDomainProject(domain);
 
   if (username) {
     return NextResponse.rewrite(new URL(`/${username}`, request.url));
