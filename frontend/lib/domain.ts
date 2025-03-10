@@ -47,7 +47,7 @@ export async function addCustomDomain(
   });
 
   // store domain/project-mapping in Redis
-  await redis.set(userId, `domain:${domain}`);
+  await redis.set(`domain:${domain}`, userId);
 
   return res.json();
 }
@@ -58,13 +58,13 @@ export async function removeCustomDomain(domain: string, userId: string) {
     headers,
   });
 
-  await redis.del(userId);
+  await redis.del(`domain:${domain}`);
 
   return res.json();
 }
 
-export async function getDomainProject(userId: string) {
-  const data = await redis.get(userId);
+export async function getDomainProject(domain: string) {
+  const data = await redis.get(`domain:${domain}`);
 
   if (data) {
     return data as string;
