@@ -1,7 +1,7 @@
 import { UserProfile } from '@/components/user/user-profile'
 import React from 'react'
 
-const UserProfilePage = async ({ params }: { params: { username: string } }) => {
+const UserProfilePage = async ({ params }: { params: Promise<{ username: string }> }) => {
     const { username } = await params
     return (
         <div>

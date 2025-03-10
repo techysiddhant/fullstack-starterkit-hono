@@ -1,5 +1,6 @@
 "use client"
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"

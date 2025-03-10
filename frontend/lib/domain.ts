@@ -52,7 +52,7 @@ export async function addCustomDomain(
   return res.json();
 }
 
-export async function removeCustomDomain(domain: string, userId: string) {
+export async function removeCustomDomain(domain: string) {
   const res = await fetch(`${BASE_URL}/v9/${PROJECT_SLUG}/${domain}`, {
     method: "DELETE",
     headers,
