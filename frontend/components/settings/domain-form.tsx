@@ -1,4 +1,5 @@
 "use client"
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -15,11 +16,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { authClient } from "@/lib/auth-client"
-import { useEffect } from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { addCustomDomain, getDomainConfig, getDomainProject } from "@/lib/domain"
 import { DomainCard } from "./domain-card"
-import { get } from "http"
 import { queryClient } from "@/lib/query-client"
 const formSchema = z.object({
     customDomain: z.string().min(2),
@@ -27,7 +26,7 @@ const formSchema = z.object({
 
 export const DomainForm = () => {
     const { data: userData } = authClient.useSession();
-    const { data, isLoading, isFetching } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: ["domains"],
         queryFn: async () => {
             // const res = await fetch('http://localhost:8787/profile', {
@@ -59,7 +58,7 @@ export const DomainForm = () => {
         }
     });
     console.log("FETCH", data?.domains);
-    const { mutate, isPending } = useMutation({
+    const { mutate } = useMutation({
         mutationFn: async (domain: string) => {
             await addCustomDomain(domain, { userId: userData?.user?.id! });
             // await fetch('http://localhost:8787/settings', {
@@ -118,7 +117,7 @@ export const DomainForm = () => {
                     // data?.domains.map((domain: any, ind) => (
                     //     <DomainCard key={ind} {...domain} />
                     // ))
-                    data?.domains ? <DomainCard customDomain={data?.customDomain!} config={data?.domains} /> : null
+                    data?.domains && <DomainCard customDomain={data?.customDomain!} config={data?.domains} />
                 )}
             </div>
         </div>

@@ -34,7 +34,8 @@ export function DomainCard({ customDomain, config }: Domain) {
     //   const { idToken } = useAuth();
     const [isFetching, setIsFetching] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-
+    console.log(isFetching);
+    console.log(isDeleting);
     async function handleRefresh() {
         setIsFetching(true);
         await queryClient.invalidateQueries({ queryKey: ["domains"] });

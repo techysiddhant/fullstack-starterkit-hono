@@ -30,7 +30,7 @@ export const ProfileForm = () => {
     useEffect(() => {
         form.setValue('username', data?.user?.username ?? "")
     }
-        , [data])
+        , [data, form])
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
