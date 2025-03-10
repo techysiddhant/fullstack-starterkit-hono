@@ -62,6 +62,20 @@ app.get("/profile", async (c) => {
     return c.json({ error: "Internal Server Error" }, 500);
   }
 });
+app.get("/:username", async (c) => {
+  const { username } = c.req.param();
+  const db = createDB(c.env as Env["Bindings"]);
+  try {
+    const userData = await db
+      .select()
+      .from(user)
+      .where(eq(user.username, username));
+    return c.json(userData);
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: "Internal Server Error" }, 500);
+  }
+});
 app.post("/settings", async (c) => {
   const db = createDB(c.env as Env["Bindings"]);
   const user = c.get("user");
