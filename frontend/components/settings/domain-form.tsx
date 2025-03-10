@@ -63,7 +63,7 @@ export const DomainForm = () => {
     console.log("FETCH", data?.domains);
     const { mutate } = useMutation({
         mutationFn: async (domain: string) => {
-            await addCustomDomain(domain, { userId: userData?.user?.id! });
+            await addCustomDomain(domain, { userId: userData?.user?.username! });
             await fetch('http://localhost:8787/settings', {
                 headers: {
                     "Content-Type": "application/json",
